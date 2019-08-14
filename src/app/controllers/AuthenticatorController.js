@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import authConfig from '../../config/auth';
 import User from '../models/User';
+import File from '../models/File';
 import Access from '../schemas/Access';
 
 import ErroHandle from '../../lib/Errorhandle';
@@ -12,6 +13,13 @@ class AuthenticatorController {
 
     const user = await User.findOne({
       where: { email },
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url'],
+        },
+      ],
     });
 
     if (!user) {
@@ -22,7 +30,7 @@ class AuthenticatorController {
       throw new ErroHandle({ message: 'Password does not match', status: 401 });
     }
 
-    const { id, name, is_admin } = user;
+    const { id, name, is_admin, avatar } = user;
 
     const token = await jwt.sign({ id }, authConfig.secret, {
       expiresIn: authConfig.expiresIn,
@@ -47,6 +55,7 @@ class AuthenticatorController {
         name,
         email,
         is_admin,
+        avatar,
       },
       access: { token, expire_in, created_at, phone_register_code },
     });

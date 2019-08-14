@@ -1,0 +1,15 @@
+To complete the installation!
+
+1 - Install the dependencies:
+  yarn add multer cloudinary redis
+
+2 - Add the code below to your route:
+
+  import multer from 'multer';
+  import multerConfig from './config/multer';
+
+  import UploadFileController from './app/controllers/UploadFileController';
+
+  const upload = multer(multerConfig);
+
+  routes.post('/uploadFile', upload.single('file'), UploadFileController.store);
