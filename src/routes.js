@@ -10,10 +10,12 @@ import radisConfig from './config/radis';
 import UserController from './app/controllers/UserController';
 import AuthenticatorController from './app/controllers/AuthenticatorController';
 import FileController from './app/controllers/FileController';
+import MeetingController from './app/controllers/MeetingController';
 
 import validateUserStore from './app/validators/UserStore';
 import validateUserUpdate from './app/validators/UserUpdate';
 import validateAutheticatorStore from './app/validators/AutheticatorStore';
+import validateMeetingStore from './app/validators/MeetingStore';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -41,5 +43,10 @@ routes.use(authMiddleware);
 routes.put('/users/', validateUserUpdate, UserController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
+
+routes.post('/meetings', validateMeetingStore, MeetingController.store);
+routes.put('/meetings', MeetingController.update);
+routes.get('/meetings', MeetingController.index);
+routes.delete('/meetings', MeetingController.delete);
 
 export default routes;
