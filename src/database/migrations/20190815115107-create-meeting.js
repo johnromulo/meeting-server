@@ -7,7 +7,15 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      date: {
+      title: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      date_start: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      date_end: {
         allowNull: false,
         type: Sequelize.DATE,
       },

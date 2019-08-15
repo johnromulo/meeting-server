@@ -1,71 +1,84 @@
-import { startOfHour, parseISO, isBefore } from 'date-fns';
+// import { col } from 'sequelize';
 
 import Meeting from '../models/Meeting';
 import User from '../models/User';
 import File from '../models/File';
 
-import ErroHandle from '../../lib/Errorhandle';
+import CreateMeetingService from '../services/CreateMeetingService';
+import UpdateMeetingService from '../services/UpdateMeetingService';
 
 class MeetingController {
   async store(req, res) {
-    const { date } = req.body;
+    const { title, date_start, date_end } = req.body;
     const user_logged_id = req.userId;
 
-    const hourStart = startOfHour(parseISO(date));
-
-    if (isBefore(hourStart, new Date())) {
-      throw new ErroHandle({
-        message: 'Past dates are not permitted',
-        status: 400,
-      });
-    }
-
-    const meeting = await Meeting.create({
-      date,
+    const { meeting } = await CreateMeetingService.run({
+      title,
+      date_start,
+      date_end,
+      user_owner: user_logged_id,
     });
-
-    const owner = await User.findByPk(user_logged_id);
-    let participants = [];
-    if (owner) {
-      await meeting.addParticipants(owner, {
-        through: {
-          is_owner: true,
-        },
-      });
-
-      const [
-        {
-          id,
-          name,
-          MeetingsUser: { is_owner },
-          avatar,
-        },
-      ] = await meeting.getParticipants({
-        include: [
-          {
-            model: File,
-            as: 'avatar',
-            attributes: ['id', 'path', 'url'],
-          },
-        ],
-      });
-
-      participants = [{ id, name, avatar, is_owner }];
-    }
-
-    return res.json({ meeting: { ...meeting.toJSON(), participants } });
+    return res.json({ meeting });
   }
 
   async update(req, res) {
-    return res.json({ ok: true });
+    const { title, date_start, date_end } = req.body;
+    const { id } = req.params;
+
+    const { meeting } = await UpdateMeetingService.run({
+      meeting_id: id,
+      title,
+      date_start,
+      date_end,
+    });
+
+    return res.json({ meeting });
   }
 
   async index(req, res) {
-    return res.json({ ok: true });
+    const { page = 1 } = req.query;
+    const { id = null } = req.params;
+
+    const meetings = await Meeting.findAll({
+      where: id && { id },
+      order: ['date_start'],
+      // raw: true,
+      include: [
+        {
+          model: User,
+          as: 'participants',
+          attributes: ['id', 'name'],
+          // raw: true,
+          through: {
+            // raw: true,
+            as: 'owner',
+            attributes: ['is_owner'],
+          },
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
+        },
+      ],
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
+
+    // meetings = meetings.map(meeting => ({ ...meeting, ok: true }));
+    // console.log(meetings);
+    return res.json({ meetings });
   }
 
   async delete(req, res) {
-    return res.json({ ok: true });
+    const { id } = req.params;
+
+    const comp = await Meeting.findByPk(id);
+    await comp.destroy();
+
+    return res.json({ deleted: true });
   }
 }
 

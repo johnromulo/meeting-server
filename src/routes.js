@@ -45,8 +45,8 @@ routes.put('/users/', validateUserUpdate, UserController.update);
 routes.post('/files', upload.single('file'), FileController.store);
 
 routes.post('/meetings', validateMeetingStore, MeetingController.store);
-routes.put('/meetings', MeetingController.update);
+routes.put('/meetings/:id', MeetingController.update);
 routes.get('/meetings', MeetingController.index);
-routes.delete('/meetings', MeetingController.delete);
+routes.delete('/meetings/:id', MeetingController.delete);
 
 export default routes;
