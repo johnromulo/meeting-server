@@ -1,6 +1,6 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('meetings_users', {
+    return queryInterface.createTable('invitations', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -24,6 +24,10 @@ module.exports = {
       is_owner: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
+      },
+      is_confirm: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,

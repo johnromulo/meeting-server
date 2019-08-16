@@ -4,11 +4,11 @@ import mongoose from 'mongoose';
 import User from '../app/models/User';
 import File from '../app/models/File';
 import Meeting from '../app/models/Meeting';
-import MeetingsUsers from '../app/models/MeetingsUsers';
+import Invitation from '../app/models/Invitation';
 
 import databaseConfig from '../config/database';
 
-const models = [User, File, Meeting, MeetingsUsers];
+const models = [User, File, Meeting, Invitation];
 class Database {
   constructor() {
     this.init();

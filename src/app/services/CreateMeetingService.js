@@ -5,6 +5,8 @@ import Meeting from '../models/Meeting';
 import User from '../models/User';
 import File from '../models/File';
 
+import CreateInvitationService from './CreateInvitationService';
+
 import ErroHandle from '../../lib/Errorhandle';
 
 class CreateMeetingService {
@@ -46,36 +48,33 @@ class CreateMeetingService {
       date_end,
     });
 
-    const owner = await User.findByPk(user_owner);
-    let participants = [];
-    if (owner) {
-      await meeting.addParticipants(owner, {
-        through: {
-          is_owner: true,
-        },
-      });
+    const inviation = await CreateInvitationService.run({
+      meeting_id: meeting.id,
+      user_id: user_owner,
+      is_owner: true,
+      is_confirm: true,
+    });
 
-      const [
+    await meeting.setInvitations(inviation);
+
+    const inviatations = await meeting.getInvitations({
+      include: [
         {
-          id,
-          name,
-          MeetingsUser: { is_owner },
-          avatar,
+          model: User,
+          as: 'participants',
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
         },
-      ] = await meeting.getParticipants({
-        include: [
-          {
-            model: File,
-            as: 'avatar',
-            attributes: ['id', 'path', 'url'],
-          },
-        ],
-      });
+      ],
+    });
 
-      participants = [{ id, name, avatar, is_owner }];
-    }
-
-    return { meeting: { ...meeting.toJSON(), participants } };
+    return { meeting: { ...meeting.toJSON(), inviatations } };
   }
 }
 

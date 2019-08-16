@@ -31,10 +31,9 @@ class Meeting extends Model {
   }
 
   static associate(models) {
-    this.belongsToMany(models.User, {
-      through: models.MeetingsUser,
+    this.hasMany(models.Invitation, {
+      as: 'invitations',
       foreignKey: 'meeting_id',
-      as: 'participants',
     });
   }
 }
