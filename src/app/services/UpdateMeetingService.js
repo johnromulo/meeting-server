@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import { startOfHour, parseISO, isBefore } from 'date-fns';
 
 import Meeting from '../models/Meeting';
+import User from '../models/User';
 import File from '../models/File';
 
 import ErroHandle from '../../lib/Errorhandle';
@@ -59,26 +60,25 @@ class UpdateMeetingService {
       date_end,
     });
 
-    const [
-      {
-        id,
-        name,
-        MeetingsUser: { is_owner },
-        avatar,
-      },
-    ] = await meeting.getParticipants({
+    const inviatations = await meeting.getInvitations({
+      attributes: ['id', 'is_owner', 'is_confirm'],
       include: [
         {
-          model: File,
-          as: 'avatar',
-          attributes: ['id', 'path', 'url'],
+          model: User,
+          as: 'participants',
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
         },
       ],
     });
 
-    const participants = [{ id, name, avatar, is_owner }];
-
-    return { meeting: { ...meetingUpdated.toJSON(), participants } };
+    return { meeting: { ...meetingUpdated.toJSON(), inviatations } };
   }
 }
 

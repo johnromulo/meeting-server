@@ -1,11 +1,10 @@
-// import { col } from 'sequelize';
-
 import Meeting from '../models/Meeting';
 import User from '../models/User';
 import File from '../models/File';
 
 import CreateMeetingService from '../services/CreateMeetingService';
 import UpdateMeetingService from '../services/UpdateMeetingService';
+import Invitation from '../models/Invitation';
 
 class MeetingController {
   async store(req, res) {
@@ -42,23 +41,32 @@ class MeetingController {
     const meetings = await Meeting.findAll({
       where: id && { id },
       order: ['date_start'],
-      // raw: true,
+      attributes: [
+        'id',
+        'past',
+        'cancelable',
+        'title',
+        'date_start',
+        'date_end',
+        'canceled_at',
+      ],
       include: [
         {
-          model: User,
-          as: 'participants',
-          attributes: ['id', 'name'],
-          // raw: true,
-          through: {
-            // raw: true,
-            as: 'owner',
-            attributes: ['is_owner'],
-          },
+          model: Invitation,
+          as: 'invitations',
+          attributes: ['id', 'is_owner', 'is_confirm'],
           include: [
             {
-              model: File,
-              as: 'avatar',
-              attributes: ['id', 'path', 'url'],
+              model: User,
+              as: 'participants',
+              attributes: ['id', 'name'],
+              include: [
+                {
+                  model: File,
+                  as: 'avatar',
+                  attributes: ['id', 'path', 'url'],
+                },
+              ],
             },
           ],
         },
@@ -67,8 +75,6 @@ class MeetingController {
       offset: (page - 1) * 20,
     });
 
-    // meetings = meetings.map(meeting => ({ ...meeting, ok: true }));
-    // console.log(meetings);
     return res.json({ meetings });
   }
 

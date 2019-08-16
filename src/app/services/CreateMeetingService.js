@@ -58,6 +58,7 @@ class CreateMeetingService {
     await meeting.setInvitations(inviation);
 
     const inviatations = await meeting.getInvitations({
+      attributes: ['id', 'is_owner', 'is_confirm'],
       include: [
         {
           model: User,
