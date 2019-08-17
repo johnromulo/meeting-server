@@ -75,7 +75,13 @@ class MeetingController {
       offset: (page - 1) * 20,
     });
 
-    return res.json({ meetings });
+    const total_itens = await Meeting.count({
+      where: id && { id },
+      order: ['date_start'],
+    });
+
+    const total_pages = Math.ceil(total_itens / 20);
+    return res.json({ meetings, total_pages, page });
   }
 
   async delete(req, res) {
