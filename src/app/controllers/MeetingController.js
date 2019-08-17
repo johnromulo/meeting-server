@@ -87,8 +87,8 @@ class MeetingController {
   async delete(req, res) {
     const { id } = req.params;
 
-    const comp = await Meeting.findByPk(id);
-    await comp.destroy();
+    const meeting = await Meeting.findByPk(id);
+    await meeting.destroy();
 
     return res.json({ deleted: true });
   }
