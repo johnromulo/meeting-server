@@ -12,6 +12,7 @@ import AuthenticatorController from './app/controllers/AuthenticatorController';
 import FileController from './app/controllers/FileController';
 import MeetingController from './app/controllers/MeetingController';
 import InvitationController from './app/controllers/InvitationController';
+import ScheduleController from './app/controllers/ScheduleController';
 
 import validateUserStore from './app/validators/UserStore';
 import validateUserUpdate from './app/validators/UserUpdate';
@@ -57,16 +58,16 @@ routes.post(
   validateInvitationStore,
   InvitationController.store
 );
-
 routes.put(
   '/invitations/:id/confimation',
   validateInvitationUpdate,
   InvitationController.update
 );
-
 routes.delete(
   '/invitations/:id/meeting/:meeting_id',
   InvitationController.delete
 );
+
+routes.get('/schedules/', ScheduleController.index);
 
 export default routes;

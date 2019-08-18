@@ -30,7 +30,7 @@ class CreateMeetingService {
     const exist = await Meeting.findAll({
       where: {
         date_start: {
-          [Op.in]: [date_start, date_end],
+          [Op.between]: [date_start, date_end],
         },
       },
     });
