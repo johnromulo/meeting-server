@@ -23,7 +23,7 @@ class FileController {
       '..',
       'tmp',
       'uploads',
-      'ee6828efabdb61ca372a709158cc34d9.png'
+      'f9a69f68be12d887dbc7a85073006978.jpg'
     );
     const size = sizeOf(tmp);
     const file = await sharp(tmp)
