@@ -42,6 +42,8 @@ routes.post(
 );
 routes.post('/users', validateUserStore, UserController.store);
 
+routes.get('/files/:size', FileController.index);
+
 routes.use(authMiddleware);
 
 routes.put('/users/', validateUserUpdate, UserController.update);

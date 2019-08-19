@@ -1,6 +1,6 @@
-// import sharp from 'sharp';
-// import { resolve } from 'path';
-// import sizeOf from 'image-size';
+import sharp from 'sharp';
+import { resolve } from 'path';
+import sizeOf from 'image-size';
 import File from '../models/File';
 
 class FileController {
@@ -12,18 +12,32 @@ class FileController {
       path,
     });
 
-    // const tmp = resolve(__dirname, '..', '..', '..', 'tmp', 'uploads', path);
-
-    // const size = sizeOf(tmp);
-
-    // await sharp(tmp)
-    //   .rotate()
-    //   .resize(Math.ceil(size.width * 0.1), Math.ceil(size.height * 0.1))
-    //   .toFile(
-    //     resolve(__dirname, '..', '..', '..', 'tmp', 'uploads', `@small-${path}`)
-    //   );
-
     return res.json({ file });
+  }
+
+  async index(req, res) {
+    const tmp = resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      'tmp',
+      'uploads',
+      'ee6828efabdb61ca372a709158cc34d9.png'
+    );
+    const size = sizeOf(tmp);
+    const file = await sharp(tmp)
+      .rotate()
+      .resize(Math.ceil(size.width * 0.1), Math.ceil(size.height * 0.1))
+      .png()
+      .toBuffer();
+
+    res.writeHead(200, {
+      'Content-Type': 'image/png',
+      'Content-Length': file.length,
+    });
+
+    return res.end(file);
   }
 }
 
