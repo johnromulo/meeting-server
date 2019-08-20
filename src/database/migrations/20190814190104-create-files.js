@@ -16,6 +16,22 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      width: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      height: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      aspect_ratio: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      mimetype: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

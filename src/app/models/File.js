@@ -6,10 +6,27 @@ class File extends Model {
       {
         name: Sequelize.STRING,
         path: Sequelize.STRING,
-        url: {
+        mimetype: Sequelize.STRING,
+        width: Sequelize.STRING,
+        height: Sequelize.STRING,
+        aspect_ratio: Sequelize.STRING,
+        urls: {
           type: Sequelize.VIRTUAL,
           get() {
-            return `${process.env.APP_URL}/files/${this.path}`;
+            return {
+              full: `${process.env.APP_URL}\
+              /api/v${process.env.API_VERSION}\
+              /files/${this.path}?width=${Math.ceil(this.width)}\
+               &height=${Math.ceil(this.height)}`.replace(/\s/g, ''),
+              medium: `${process.env.APP_URL}\
+              /api/v${process.env.API_VERSION}\
+              /files/${this.path}?width=${Math.ceil(this.width * 0.5)}\
+               &height=${Math.ceil(this.height * 0.5)}`.replace(/\s/g, ''),
+              small: `${process.env.APP_URL}\
+              /api/v${process.env.API_VERSION}\
+              /files/${this.path}?width=${Math.ceil(this.width * 0.25)}\
+               &height=${Math.ceil(this.height * 0.25)}`.replace(/\s/g, ''),
+            };
           },
         },
       },

@@ -42,7 +42,7 @@ routes.post(
 );
 routes.post('/users', validateUserStore, UserController.store);
 
-routes.get('/files/:size', FileController.index);
+routes.get('/files/:path', FileController.index);
 
 routes.use(authMiddleware);
 
