@@ -2,6 +2,7 @@ import Meeting from '../models/Meeting';
 import Invitation from '../models/Invitation';
 
 import CreateInvitationService from '../services/CreateInvitationService';
+import CreateNotificationService from '../services/CreateNotificationService';
 
 import ErroHandle from '../../lib/Errorhandle';
 
@@ -38,6 +39,14 @@ class InvitationController {
       ...inviation,
       meeting_id,
     }));
+
+    data.forEach(async element => {
+      await CreateNotificationService.run({
+        user_id: element.user_id,
+        date_start: meeting.date_start,
+        date_end: meeting.date_end,
+      });
+    });
 
     const invtations = await CreateInvitationService.run(data);
 

@@ -68,7 +68,7 @@ class CreateMeetingService {
             {
               model: File,
               as: 'avatar',
-              attributes: ['id', 'path', 'url'],
+              attributes: ['id', 'path', 'urls'],
             },
           ],
         },
