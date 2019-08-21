@@ -40,7 +40,9 @@ class InvitationController {
       meeting_id,
     }));
 
-    data.forEach(async element => {
+    const invtations = await CreateInvitationService.run(data);
+
+    const createNotifications = invtations.map(async element => {
       await CreateNotificationService.run({
         user_id: element.user_id,
         date_start: meeting.date_start,
@@ -48,9 +50,9 @@ class InvitationController {
       });
     });
 
-    const invtations = await CreateInvitationService.run(data);
+    await Promise.all(createNotifications);
 
-    res.json({ invtations });
+    return res.json({ invtations });
   }
 
   async update(req, res) {

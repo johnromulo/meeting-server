@@ -5,8 +5,9 @@ import Notification from '../schemas/Notifications';
 
 class CreateNotificationService {
   async run({ user_id, date_start, date_end }) {
-    const start = parseISO(date_start);
-    const end = parseISO(date_end);
+    console.log('log', user_id, date_start, date_end);
+    const start = new Date(date_start);
+    const end = new Date(date_end);
 
     const formattedDateStart = format(
       start,
@@ -20,10 +21,12 @@ class CreateNotificationService {
       locale: pt,
     });
 
-    await Notification.create({
+    const element = await Notification.create({
       content: `Nova reunião agendada ${formattedDateStart} até ${formattedDateEnd}`,
       user: user_id,
     });
+
+    console.log('element', element);
   }
 }
 
