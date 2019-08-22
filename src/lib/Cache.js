@@ -1,10 +1,10 @@
 import Redis from '../config/ioredis';
-import radisConfig from '../config/radis';
+import redisConfig from '../config/redis';
 
 class Cache {
   constructor() {
     this.redis = new Redis({
-      ...radisConfig,
+      ...redisConfig,
       keyPrefix: 'cache:',
     });
   }

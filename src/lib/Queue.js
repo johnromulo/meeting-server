@@ -1,7 +1,8 @@
 import Bee from 'bee-queue';
-import radisConfig from '../config/radis';
+import redisConfig from '../config/redis';
+import SendNotification from '../app/jobs/SendNotification';
 
-const jobs = [];
+const jobs = [SendNotification];
 
 class Queue {
   constructor() {
@@ -14,7 +15,7 @@ class Queue {
     jobs.forEach(({ key, handle }) => {
       this.queues[key] = {
         bee: new Bee(key, {
-          redis: radisConfig,
+          redis: redisConfig,
         }),
         handle,
       };
@@ -28,6 +29,7 @@ class Queue {
   processQueue() {
     jobs.forEach(job => {
       const { bee, handle } = this.queues[job.key];
+
       bee.on('failed', this.handleFailure).process(handle);
     });
   }

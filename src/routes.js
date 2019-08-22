@@ -5,7 +5,7 @@ import BruteRedis from 'express-brute-redis';
 import multer from 'multer';
 import multerConfig from './config/multer';
 
-import radisConfig from './config/radis';
+import redisConfig from './config/redis';
 
 import UserController from './app/controllers/UserController';
 import AuthenticatorController from './app/controllers/AuthenticatorController';
@@ -28,7 +28,7 @@ const upload = multer(multerConfig);
 
 const bruteStore = new BruteRedis({
   client: redis.createClient({
-    ...radisConfig,
+    ...redisConfig,
   }),
 });
 

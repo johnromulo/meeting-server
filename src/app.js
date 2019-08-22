@@ -16,7 +16,7 @@ import initLogger from './config/logger';
 
 import './database';
 
-import radisConfig from './config/radis';
+import radisConfig from './config/redis';
 import rateLimitConfig from './config/rateLimit';
 
 class App {

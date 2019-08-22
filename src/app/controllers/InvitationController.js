@@ -2,7 +2,9 @@ import Meeting from '../models/Meeting';
 import Invitation from '../models/Invitation';
 
 import CreateInvitationService from '../services/CreateInvitationService';
-import CreateNotificationService from '../services/CreateNotificationService';
+
+import SendNotification from '../jobs/SendNotification';
+import Queue from '../../lib/Queue';
 
 import ErroHandle from '../../lib/Errorhandle';
 
@@ -42,15 +44,13 @@ class InvitationController {
 
     const invtations = await CreateInvitationService.run(data);
 
-    const createNotifications = invtations.map(async element => {
-      await CreateNotificationService.run({
+    invtations.map(async element => {
+      await Queue.add(SendNotification.key, {
         user_id: element.user_id,
         date_start: meeting.date_start,
         date_end: meeting.date_end,
       });
     });
-
-    await Promise.all(createNotifications);
 
     return res.json({ invtations });
   }

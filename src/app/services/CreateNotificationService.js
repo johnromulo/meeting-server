@@ -1,11 +1,10 @@
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-import Notification from '../schemas/Notifications';
+import Notification from '../schemas/Notification';
 
 class CreateNotificationService {
   async run({ user_id, date_start, date_end }) {
-    console.log('log', user_id, date_start, date_end);
     const start = new Date(date_start);
     const end = new Date(date_end);
 
@@ -21,12 +20,12 @@ class CreateNotificationService {
       locale: pt,
     });
 
-    const element = await Notification.create({
+    const notification = await Notification.create({
       content: `Nova reunião agendada ${formattedDateStart} até ${formattedDateEnd}`,
       user: user_id,
     });
 
-    console.log('element', element);
+    return notification;
   }
 }
 
