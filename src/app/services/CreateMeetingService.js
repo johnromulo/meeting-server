@@ -48,14 +48,12 @@ class CreateMeetingService {
       date_end,
     });
 
-    await CreateInvitationService.run([
-      {
-        meeting_id: meeting.id,
-        user_id: user_owner,
-        is_owner: true,
-        is_confirm: true,
-      },
-    ]);
+    await CreateInvitationService.run({
+      meeting_id: meeting.id,
+      user_id: user_owner,
+      is_owner: true,
+      is_confirm: true,
+    });
 
     const inviatations = await meeting.getInvitations({
       attributes: ['id', 'is_owner', 'is_confirm'],

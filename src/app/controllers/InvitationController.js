@@ -10,8 +10,8 @@ import ErroHandle from '../../lib/Errorhandle';
 
 class InvitationController {
   async store(req, res) {
-    const { meeting_id, participants } = req.body;
-    const user_id = req.userId;
+    const { meeting_id, user_id, is_owner } = req.body;
+    const user_logged_id = req.userId;
 
     const meeting = await Meeting.findByPk(meeting_id);
 
@@ -25,7 +25,7 @@ class InvitationController {
     const check_owner = await Invitation.findOne({
       where: {
         meeting_id,
-        user_id,
+        user_id: user_logged_id,
         is_owner: true,
       },
     });
@@ -37,22 +37,20 @@ class InvitationController {
       });
     }
 
-    const data = participants.map(inviation => ({
-      ...inviation,
+    const inviation = await CreateInvitationService.run({
       meeting_id,
-    }));
-
-    const invtations = await CreateInvitationService.run(data);
-
-    invtations.map(async element => {
-      await Queue.add(SendNotification.key, {
-        user_id: element.user_id,
-        date_start: meeting.date_start,
-        date_end: meeting.date_end,
-      });
+      user_id,
+      is_owner,
+      is_confirm: false,
     });
 
-    return res.json({ invtations });
+    await Queue.add(SendNotification.key, {
+      user_id,
+      date_start: meeting.date_start,
+      date_end: meeting.date_end,
+    });
+
+    return res.json({ inviation });
   }
 
   async update(req, res) {
